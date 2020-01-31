@@ -14,7 +14,7 @@ import (
 
 func playervsAi(w http.ResponseWriter, r *http.Request) {
 
-	t, _ := template.ParseFiles("./cmd/tictactoed/web/ttt1.html")
+	t, _ := template.ParseFiles("TicTacToe/cmd/tictactoed/web/ttt1.html")
 
 	type Passdata struct {
 		Cwin  bool

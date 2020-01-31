@@ -20,7 +20,7 @@ var Om int
 //PlayervsPlayer is the two player option for my http tictactoe
 func playervsPlayer(w http.ResponseWriter, r *http.Request) {
 
-	t, _ := template.ParseFiles("./cmd/tictactoed/web/ttt2.html")
+	t, _ := template.ParseFiles("TicTacToe/cmd/tictactoed/web/ttt2.html")
 	var turn bool
 	type Passdata struct {
 		Cwin bool
