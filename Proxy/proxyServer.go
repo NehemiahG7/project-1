@@ -10,10 +10,12 @@ import (
 	"github.com/NehemiahG7/project-1/Proxy/Balancer"
 )
 
+//Channel to pass messages for the logger
 var logCh chan string = make(chan string)
 
 func main(){
 
+	//Connect to logger
 	go handleLog()
 
 	proxy := http.HandlerFunc(func (rw http.ResponseWriter, req *http.Request){
@@ -29,7 +31,6 @@ func main(){
 		req.RequestURI = ""
 
 		s, _, _ := net.SplitHostPort(req.RemoteAddr)
-		fmt.Println(s)
 		req.Header.Set("X-Forwarded-For", s)
 
 		resp, err := http.DefaultClient.Do(req)
@@ -46,7 +47,7 @@ func main(){
 		}
 		rw.WriteHeader(resp.StatusCode)
 		io.Copy(rw, resp.Body)
-		logCh <- "Forwarded to: " + tURL.Host
+		logCh <- "Forwarded to: " + s
 	})
 	fmt.Printf("Proxy listening on port 8081\n")
 	http.ListenAndServe(":8081", proxy)
