@@ -15,7 +15,7 @@ func init() {
 }
 
 func homepage(w http.ResponseWriter, r *http.Request) {
-	t, err := template.ParseFiles("TicTacToe/cmd/tictactoed/web/index.html")
+	t, err := template.ParseFiles("cmd/tictactoed/web/index.html")
 	if err != nil{
 		log.Fatalf("%s",err)
 	}
@@ -27,7 +27,7 @@ func homepage(w http.ResponseWriter, r *http.Request) {
 
 }
 func index(w http.ResponseWriter, r *http.Request) {
-	t, err := template.ParseFiles("TicTacToe/cmd/tictactoed/web/index.html")
+	t, err := template.ParseFiles("cmd/tictactoed/web/index.html")
 	if err != nil{
 		log.Fatalf("%s",err)
 	}

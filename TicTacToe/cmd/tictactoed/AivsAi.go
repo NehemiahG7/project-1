@@ -10,7 +10,7 @@ import (
 )
 
 func aivsAi(w http.ResponseWriter, r *http.Request) {
-	t, _ := template.ParseFiles("TicTacToe/cmd/tictactoed/web/ttt3.html")
+	t, _ := template.ParseFiles("cmd/tictactoed/web/ttt3.html")
 	t.Execute(w, nil)
 
 	gamewin.CheckWin()

@@ -15,7 +15,7 @@ var LG string
 var RG string
 
 //CONFIGFILE json file used to encode my text files into my project
-const CONFIGFILE string = "TicTacToe/gameboard/boardconfig.json"
+const CONFIGFILE string = "gameboard/boardconfig.json"
 
 //Configuration struct that pulls my json files.
 type Configuration struct {

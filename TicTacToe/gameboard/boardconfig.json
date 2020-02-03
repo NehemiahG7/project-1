@@ -1,4 +1,4 @@
 {
-    "Grid": "TicTacToe/gameboard/gridconfig.txt",
-    "Scalenumber": "TicTacToe/gameboard/scaleconfig.txt" 
+    "Grid": "gameboard/gridconfig.txt",
+    "Scalenumber": "gameboard/scaleconfig.txt" 
 }
