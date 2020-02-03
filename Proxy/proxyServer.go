@@ -8,6 +8,7 @@ import (
 	"log"
 	"fmt"
 	"github.com/NehemiahG7/project-1/Proxy/Balancer"
+	"github.com/NehemiahG7/project-1/Proxy/Config"
 )
 
 //Channel to pass messages for the logger
@@ -49,12 +50,12 @@ func main(){
 		io.Copy(rw, resp.Body)
 		logCh <- "Forwarded to: " + s
 	})
-	fmt.Printf("Proxy listening on port 8081\n")
-	http.ListenAndServe(":8081", proxy)
+	fmt.Printf("Proxy listening on port %s\n", config.ProxyPort)
+	http.ListenAndServe(":" + config.ProxyPort, proxy)
 }
 func handleLog(){
 	for{
-		conn, err := net.Dial("tcp", "127.0.0.1:9090")
+		conn, err := net.Dial("tcp", "127.0.0.1:" + config.LoggerPort)
 		if err != nil{
 			log.Fatalf("Dial errL %s\n", err)
 		}

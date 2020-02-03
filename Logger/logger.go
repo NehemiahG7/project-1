@@ -1,27 +1,25 @@
 package main
 
 import (
+	"github.com/NehemiahG7/project-1/Logger/Config"
 	"fmt"
 	"net"
 	"log"
 	"os"
 )
 
-var fileName string = "txt.log"
-var loggerPort string = ":9090"
-
 func main(){
-	file := loadFile(fileName)
-	logger := log.New(file, loggerPort, log.Flags())
+	file := loadFile(config.LogName)
+	logger := log.New(file, config.LoggerPort, log.Flags())
 	defer file.Close()
 
-	ln, err := net.Listen("tcp", loggerPort)
+	ln, err := net.Listen("tcp", ":" + config.LoggerPort)
 	defer ln.Close()
 
 	if err != nil{
 		logger.Fatalf("Listener failed: %s\n", err)
 	}
-	fmt.Printf("Logger listening on port :%s\n",loggerPort)
+	fmt.Printf("Logger listening on port :%s\n",config.LoggerPort)
 
 	connect := make(chan string)
 
