@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"log"
 	"fmt"
-	"github.com/NehemiahG7/project-1/Proxy/Balancer"
+	"github.com/NehemiahG7/project-1/Proxy/Redirector"
 	"github.com/NehemiahG7/project-1/Proxy/Config"
 )
 
