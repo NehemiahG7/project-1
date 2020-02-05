@@ -6,7 +6,7 @@ WORKDIR $GOPATH/src/github.com/NehemiahG7/project-1/LoadBalancer
 COPY . .
 RUN go build ./loadBalancer.go
 
-ENTRYPOINT ["./tictactoed"]
+ENTRYPOINT ["./loadBalancer"]
 CMD [""]
 LABEL Name=loadbalancer Version=0.0.1
-EXPOSE 8080
+EXPOSE 6060

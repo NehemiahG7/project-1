@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"html/template"
 	"log"
@@ -9,9 +10,11 @@ import (
 	"github.com/NehemiahG7/project-1/TicTacToe/gameboard"
 	"github.com/NehemiahG7/project-1/TicTacToe/gamewin"
 )
+var port string
 
 func init() {
 	gameboard.LoadCells("[", "]")
+	flag.StringVar(&port, "f", "8080", "Sets the port the server listens to")
 }
 
 func homepage(w http.ResponseWriter, r *http.Request) {
@@ -55,7 +58,7 @@ func main() {
 	http.HandleFunc("/ttt2", playervsPlayer)
 	http.HandleFunc("/ttt3", aivsAi)
 
-	err := http.ListenAndServe(":8080", nil) // setting listening port
+	err := http.ListenAndServe(port, nil) // setting listening port
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}
