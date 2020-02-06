@@ -28,6 +28,7 @@ func main(){
 	proxy := http.HandlerFunc(func (rw http.ResponseWriter, req *http.Request){
 
 		logCh <- "Balancer: request recieved from proxy for: " + req.Header["X-Forwarded-For"][0]
+		
 
 
 		se := serverhand.GetServer(Servers)

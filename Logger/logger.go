@@ -25,7 +25,7 @@ func main(){
 
 	for{
 		go handleLog(ln, logger, connect)
-		logger.Printf("Connection from %s\n", <-connect)
+		logger.Printf("Logger: connection from %s\n", <-connect)
 	}
 }
 func handleLog(ln net.Listener, logger *log.Logger, connect chan string){
@@ -33,7 +33,7 @@ func handleLog(ln net.Listener, logger *log.Logger, connect chan string){
 		conn, err := ln.Accept()
 		defer conn.Close()
 		if err != nil{
-			logger.Printf("Connection error: %s\n", err)
+			logger.Printf("Logger: connection error: %s\n", err)
 			return
 		}
 

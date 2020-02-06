@@ -14,7 +14,7 @@ var port string
 
 func init() {
 	gameboard.LoadCells("[", "]")
-	flag.StringVar(&port, "f", "8080", "Sets the port the server listens to")
+	flag.StringVar(&port, "f", "80", "Sets the port the server listens to")
 	flag.Parse()
 }
 
