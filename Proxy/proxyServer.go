@@ -18,12 +18,15 @@ func main(){
 
 	//Connect to logger
 	go handleLog()
+	logCh <- "Proxy Online"
 
 	//Create a proxy handler to forward requests
 	proxy := http.HandlerFunc(func (rw http.ResponseWriter, req *http.Request){
 		logCh <- "Proxy: request from " + req.RemoteAddr
-		tURL, err := url.Parse("http://127.0.0.1:" + balancer.GetPort())
+		str := balancer.GetPort()
+		tURL, err := url.Parse("http://127.0.0.1:" + str)
 		if err != nil{
+			logCh <- "Proxy: Cannot Parse URL http://127.0.0.1:" + str + err.Error()
 			log.Fatalf("tURL: %s\n", err)
 		}
 
@@ -32,7 +35,10 @@ func main(){
 		req.URL.Scheme = tURL.Scheme
 		req.RequestURI = ""
 
-		s, _, _ := net.SplitHostPort(req.RemoteAddr)
+		s, _, err := net.SplitHostPort(req.RemoteAddr)
+		if err != nil{
+			logCh <- "Proxy: Cannot SplitHostPort " + req.RemoteAddr
+		}
 		req.Header.Set("X-Forwarded-For", s)
 
 		resp, err := http.DefaultClient.Do(req)

@@ -22,19 +22,23 @@ func main(){
 
 	//Connect to logger
 	go handleLog()
+	logCh <- "Balancer Online"
 
-	logCh <- "Forwarding to: " + string(serverhand.GetKeys(Servers))
+	logCh <- "Balancer: Serving: " + string(serverhand.GetKeys(Servers))
 	proxy := http.HandlerFunc(func (rw http.ResponseWriter, req *http.Request){
 
-		logCh <- "Bal: request recieved from proxy for: " + req.Header["X-Forwarded-For"][0]
+		logCh <- "Balancer: request recieved from proxy for: " + req.Header["X-Forwarded-For"][0]
 
 
 		se := serverhand.GetServer(Servers)
 		Servers[se]++
-
-		tURL, err := url.Parse("http://"+"localhost:"+ se)
+		//Use this command when running loadBalancer outside of a docker container
+		//tURL, err := url.Parse("http://"+"localhost:"+ se)
+		tURL, err := url.Parse("http://" + se)
+		
 		if err != nil{
-			log.Fatalf("tURL: %s\n", err)
+			logCh <- "Balancer: Cannot Parse URL:" + se + err.Error()
+			return
 		}
 
 		req.Host = tURL.Host
@@ -42,12 +46,15 @@ func main(){
 		req.URL.Scheme = tURL.Scheme
 		req.RequestURI = ""
 
-		s, _, _ := net.SplitHostPort(req.RemoteAddr)
+		s, _, err := net.SplitHostPort(req.RemoteAddr)
+		if err != nil{
+			logCh <- "Balancer: Cannot SplitHostPort " + req.RemoteAddr
+		}
 
 		resp, err := http.DefaultClient.Do(req)
 		if err != nil{
 			rw.WriteHeader(http.StatusInternalServerError)
-			fmt.Fprint(rw, err)
+			logCh <- "Balancer: Cannot process request: " + err.Error()
 			return
 		}
 
@@ -58,7 +65,7 @@ func main(){
 		}
 		rw.WriteHeader(resp.StatusCode)
 		io.Copy(rw, resp.Body)
-		logCh <- "bal: Forwarded to: " + s
+		logCh <- "Balancer: Forwarded to: " + s
 	})
 
 	fmt.Printf("Balancer listening from %s\n", config.Port)
@@ -66,7 +73,8 @@ func main(){
 }
 func handleLog(){
 	for{
-		conn, err := net.Dial("tcp", "127.0.0.1:" + config.LoggerPort)
+		//conn, err := net.Dial("tcp", "127.0.0.1:" + config.LoggerPort)
+		conn, err := net.Dial("tcp", "172.17.0.1:" + config.LoggerPort)
 		if err != nil{
 			log.Fatalf("Logger not loaded %s\n", err)
 		}

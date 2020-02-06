@@ -9,4 +9,4 @@ RUN go build ./loadBalancer.go
 ENTRYPOINT ["./loadBalancer"]
 CMD [""]
 LABEL Name=loadbalancer Version=0.0.1
-EXPOSE 6060
+EXPOSE 8082

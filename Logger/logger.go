@@ -25,7 +25,7 @@ func main(){
 
 	for{
 		go handleLog(ln, logger, connect)
-		logger.Printf("Connection made: %s\n", <-connect)
+		logger.Printf("Connection from %s\n", <-connect)
 	}
 }
 func handleLog(ln net.Listener, logger *log.Logger, connect chan string){
@@ -39,7 +39,7 @@ func handleLog(ln net.Listener, logger *log.Logger, connect chan string){
 
 		logger.SetPrefix(conn.RemoteAddr().String() + " - ")
 
-		connect <- string("connected")
+		connect <- string(conn.RemoteAddr().String())
 		buff := make([]byte, 1024)
 
 		num, err := conn.Read(buff)
