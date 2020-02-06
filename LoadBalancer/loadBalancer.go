@@ -16,16 +16,23 @@ import (
 var logCh chan string = make(chan string)
 
 //Servers is a copy of config.Servers
-var Servers *[]serverhand.Server = config.Servers
+var Servers map[string]int = *config.Servers
 
 func main(){
 
 	//Connect to logger
 	go handleLog()
 
+	logCh <- "Forwarding to: " + string(serverhand.GetKeys(Servers))
 	proxy := http.HandlerFunc(func (rw http.ResponseWriter, req *http.Request){
-		logCh <- "request from " + req.RemoteAddr
-		tURL, err := url.Parse(serverhand.GetServer(*Servers))
+
+		logCh <- "Bal: request recieved from proxy for: " + req.Header["X-Forwarded-For"][0]
+
+
+		se := serverhand.GetServer(Servers)
+		Servers[se]++
+
+		tURL, err := url.Parse("http://"+"localhost:"+ se)
 		if err != nil{
 			log.Fatalf("tURL: %s\n", err)
 		}
@@ -51,16 +58,17 @@ func main(){
 		}
 		rw.WriteHeader(resp.StatusCode)
 		io.Copy(rw, resp.Body)
-		logCh <- "Forwarded to: " + s
+		logCh <- "bal: Forwarded to: " + s
 	})
-	fmt.Printf("Balancer listening from docker net\n")
-	http.ListenAndServe(":" + config.LoggerPort, proxy)
+
+	fmt.Printf("Balancer listening from %s\n", config.Port)
+	http.ListenAndServe(":" + config.Port, proxy)
 }
 func handleLog(){
 	for{
 		conn, err := net.Dial("tcp", "127.0.0.1:" + config.LoggerPort)
 		if err != nil{
-			log.Fatalf("Dial errL %s\n", err)
+			log.Fatalf("Logger not loaded %s\n", err)
 		}
 		conn.Write([]byte(<-logCh))
 	}

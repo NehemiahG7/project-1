@@ -13,22 +13,37 @@ type Server struct{
 }
 
 //LoadServers takes in a string of names seperated by a coma and makes each name into a server struct, returning the slice
-func LoadServers(servs string) *[]Server{
+func LoadServers(servs string) *map[string]int{
 	arry := strings.Split(servs, ",")
-	servers := make([]Server, 0)
+
+	servers := make(map[string]int)
 	for i :=0; i < len(arry); i++{
-		serv := Server{arry[i],0}
-		servers = append(servers, serv)
+		servers[arry[i]] = 0
 	}
 	return &servers
 }
 //GetServer checks the currently active servers and returns the one with the least use
-func GetServer(servs []Server) string{
-	server := servs[0]
-	for i := 1; i < len(servs); i++{
-		if server.TotalCon > servs[i].TotalCon{
-			server = servs[i]
+func GetServer(servs map[string]int) string{
+
+	j := -1
+	i := 0
+	var str string
+	for k := range servs{
+		if servs[k] <= i || j < 0{
+			j++
+			str = k
+			i = servs[k]
 		}
 	}
-	return server.Name
+	return str
+
+}
+
+//GetKeys returns all keys in mymap
+func GetKeys(mymap map[string]int) string {
+    keys := ""
+    for k := range mymap {
+        keys = keys + "," + k
+	}
+	return keys
 }

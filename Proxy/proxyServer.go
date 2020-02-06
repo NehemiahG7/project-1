@@ -19,8 +19,9 @@ func main(){
 	//Connect to logger
 	go handleLog()
 
+	//Create a proxy handler to forward requests
 	proxy := http.HandlerFunc(func (rw http.ResponseWriter, req *http.Request){
-		logCh <- "request from " + req.RemoteAddr
+		logCh <- "Proxy: request from " + req.RemoteAddr
 		tURL, err := url.Parse("http://127.0.0.1:" + balancer.GetPort())
 		if err != nil{
 			log.Fatalf("tURL: %s\n", err)
@@ -36,6 +37,7 @@ func main(){
 
 		resp, err := http.DefaultClient.Do(req)
 		if err != nil{
+			logCh <- "Proxy: Request could not be processed, " + err.Error()
 			rw.WriteHeader(http.StatusInternalServerError)
 			fmt.Fprint(rw, err)
 			return
@@ -48,7 +50,7 @@ func main(){
 		}
 		rw.WriteHeader(resp.StatusCode)
 		io.Copy(rw, resp.Body)
-		logCh <- "Forwarded to: " + s
+		logCh <- "Proxy: Forwarded to: " + s
 	})
 	fmt.Printf("Proxy listening on port %s\n", config.ProxyPort)
 	http.ListenAndServe(":" + config.ProxyPort, proxy)

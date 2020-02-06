@@ -15,6 +15,7 @@ var port string
 func init() {
 	gameboard.LoadCells("[", "]")
 	flag.StringVar(&port, "f", "8080", "Sets the port the server listens to")
+	flag.Parse()
 }
 
 func homepage(w http.ResponseWriter, r *http.Request) {
@@ -51,15 +52,16 @@ func hboard(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	fmt.Println("Server Status:Listening Host:localhost Port:8080")
 	http.HandleFunc("/", index)
 	http.HandleFunc("/ttt", homepage)
 	http.HandleFunc("/ttt1", playervsAi)
 	http.HandleFunc("/ttt2", playervsPlayer)
 	http.HandleFunc("/ttt3", aivsAi)
-
-	err := http.ListenAndServe(port, nil) // setting listening port
+	
+	fmt.Println("Server Status:Listening Host:localhost Port:"+ port)
+	err := http.ListenAndServe(":"+port, nil) // setting listening port
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}
+
 }
