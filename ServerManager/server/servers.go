@@ -11,7 +11,7 @@ import (
 func StartServer(cont string, num int, logCh chan string){
 
 	s := "docker run --rm -d --name serv" + strconv.Itoa(num) + " --network my-net "+ cont
-	logCh <- s
+	logCh <- "Manager: " + s
 	args := strings.Split(s, " ")
 	
 	//Create command with args[0] as command and rest as args

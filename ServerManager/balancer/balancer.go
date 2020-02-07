@@ -12,7 +12,11 @@ func StartBalancer(num int, logCh chan string){
 	var b strings.Builder
 	fmt.Fprintf(&b, "docker run --rm --name balancer --network my-net balancer -addr=")
 	for i := 0; i < num; i++{
-		fmt.Fprintf(&b, "serv%d,", i)
+		if i == 0{
+			fmt.Fprintf(&b, "serv%d", i)
+		}else{
+			fmt.Fprintf(&b, ",serv%d", i)
+		}
 	}
 	logCh <- "Bal command: " + b.String()
 	//split command string into command and args
