@@ -14,11 +14,11 @@ func main(){
 	defer file.Close()
 
 	ln, err := net.Listen("tcp", ":" + config.LoggerPort)
-	defer ln.Close()
-
 	if err != nil{
 		logger.Fatalf("Listener failed: %s\n", err)
 	}
+	defer ln.Close()
+
 	fmt.Printf("Logger listening on port :%s\n",config.LoggerPort)
 
 	connect := make(chan string)
