@@ -1,6 +1,7 @@
 package main
 
 import (
+	"time"
 	"io"
 	"fmt"
 	"net"
@@ -27,11 +28,19 @@ func main(){
 	logCh <- "Balancer: Serving: " + string(serverhand.GetKeys(Servers))
 	proxy := http.HandlerFunc(func (rw http.ResponseWriter, req *http.Request){
 
+		//Check to make sure that the client went through the reverse proxy and forward to the correct server
+		se := ""
+		if req.Header.Get("X-Forwarded-For") == ""{
+			logCh <- "Balancer: request denied from - " + req.RemoteAddr
+			return
+		} else if req.Header.Get("Server") != ""{
+			se = req.Header.Get("Server")
+		} else {
+			se = serverhand.GetServer(Servers)
+			addCookie(rw, "Server", se)
+		}
 		logCh <- "Balancer: request recieved from proxy for: " + req.Header["X-Forwarded-For"][0]
 		
-
-
-		se := serverhand.GetServer(Servers)
 		Servers[se]++
 		//Use this command when running loadBalancer outside of a docker container
 		//tURL, err := url.Parse("http://"+"localhost:"+ se)
@@ -71,6 +80,17 @@ func main(){
 
 	fmt.Printf("Balancer listening from %s\n", config.Port)
 	http.ListenAndServe(":" + config.Port, proxy)
+}
+func addCookie(w http.ResponseWriter, name string, value string){
+	expire := time.Now().AddDate(0,0,1)
+	cookie := http.Cookie{
+		Name: name,
+		Value: value,
+		Expires: expire,
+
+	}
+	http.SetCookie(w, &cookie)
+
 }
 func handleLog(){
 	for{

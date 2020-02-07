@@ -40,6 +40,7 @@ func main(){
 			logCh <- "Proxy: Cannot SplitHostPort " + req.RemoteAddr
 		}
 		req.Header.Set("X-Forwarded-For", s)
+	
 
 		resp, err := http.DefaultClient.Do(req)
 		if err != nil{

@@ -7,7 +7,7 @@ import(
 	"github.com/NehemiahG7/project-1/ServerManager/server"
 	"github.com/NehemiahG7/project-1/ServerManager/rProxy"
 	//"os/exec"
-	"log"
+	//"log"
 	"fmt"
 	"net"
 	//"strings"
@@ -22,12 +22,18 @@ var power chan string = make(chan string)
 
 
 func main(){
+	//Start Logger and wait for response
 	go logger.StartLogger(cmdCh)
 	fmt.Println(<- cmdCh)
+
+	//Connect to logger
 	go handleLog()
 	logCh <- "Manager Online"
+
+	//Start the rest of the server package
 	go rproxy.StartProxy(logCh)
 	go balancer.StartBalancer(config.NumServs, logCh)
+	<- logCh
 	for i := 0; i < config.NumServs; i++{
 		go server.StartServer(config.Container, i, logCh)
 	}
@@ -42,7 +48,8 @@ func handleLog(){
 		//conn, err := net.Dial("tcp", "127.0.0.1:" + config.LoggerPort)
 		conn, err := net.Dial("tcp", "localhost:" + config.LoggerPort)
 		if err != nil{
-			log.Fatalf("Logger not loaded %s\n", err)
+			fmt.Printf("Logger not loaded %s\n", err)
+			continue
 		}
 		conn.Write([]byte(<-logCh))
 	}
