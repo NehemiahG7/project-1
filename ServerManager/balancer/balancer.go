@@ -10,9 +10,9 @@ import (
 func StartBalancer(num int, logCh chan string){
 	//create command string
 	var b strings.Builder
-	fmt.Fprintf(&b, "docker run --rm -p 8082:9090 --name balancer --network my-net balancer -addr=")
+	fmt.Fprintf(&b, "docker run --rm --name balancer --network my-net balancer -addr=")
 	for i := 0; i < num; i++{
-		fmt.Fprintf(&b, "serv%d", i)
+		fmt.Fprintf(&b, "serv%d,", i)
 	}
 	logCh <- "Bal command: " + b.String()
 	//split command string into command and args

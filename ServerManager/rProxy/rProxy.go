@@ -1,21 +1,27 @@
 package rproxy
 
 import (
+	"strings"
 	"fmt"
 	"os/exec"
 )
 
 //StartProxy starts a reverse proxy pointing to the load balancer
 func StartProxy(logCh chan string){
-	cmd := exec.Command("./Proxy/proxyServer")
+	//Build command string
+	str := "docker run --rm -p 8081:8081 --name proxy --network my-net proxy"
+
+	//Split command string and creat cmd
+	args := strings.Split(str, " ")
+	cmd := exec.Command(args[0], args[1:]...)
 	//cmd.Start()
 	
 	fmt.Println("Proxy started")
 	// err := cmd.Wait()
-	str, err := cmd.CombinedOutput()
+	out, err := cmd.CombinedOutput()
 	if err != nil{
 		logCh <- "Manager: proxy failed" + err.Error()
 	} else {
-		logCh <- "Manager: " + string(str) 
+		logCh <- "Manager: " + string(out) 
 	}
 }

@@ -24,9 +24,9 @@ func main(){
 	proxy := http.HandlerFunc(func (rw http.ResponseWriter, req *http.Request){
 		logCh <- "Proxy: request from " + req.RemoteAddr
 		str := balancer.GetPort()
-		tURL, err := url.Parse("http://172.18.0.3:" + str)
+		tURL, err := url.Parse("http://" + str)
 		if err != nil{
-			logCh <- "Proxy: Cannot Parse URL http://127.0.0.1:" + str + err.Error()
+			logCh <- "Proxy: Cannot Parse URL " + str + err.Error()
 			log.Fatalf("tURL: %s\n", err)
 		}
 
@@ -64,7 +64,7 @@ func main(){
 }
 func handleLog(){
 	for{
-		conn, err := net.Dial("tcp", "127.0.0.1:" + config.LoggerPort)
+		conn, err := net.Dial("tcp", "172.17.0.1:" + config.LoggerPort)
 		if err != nil{
 			log.Fatalf("Dial errL %s\n", err)
 		}
